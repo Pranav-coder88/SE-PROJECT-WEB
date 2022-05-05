@@ -1,0 +1,15 @@
+#searchBar{
+    margin-top: 25rem ;margin-left: 30rem ;margin-right: 25rem ;margin-bottom: 25rem ;
+    position: absolute;
+    z-index:2;
+    width : 40%
+}
+
+/* #carouselExampleFade{
+    position: absolute;
+    z-index:1;
+} */
+
+body {
+    overflow: hidden; /* Hide scrollbars */
+  }
