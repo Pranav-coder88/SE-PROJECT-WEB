@@ -16,9 +16,9 @@ app.use(express.urlencoded({ extended: false }))
 
 
 
-mongoose.connect('mongodb://localhost:27017/CropAirDB' , {
-    useNewUrlParser : true,
-    useUnifiedTopology : true,
+mongoose.connect('mongodb+srv://cropairse:cropairse@cluster0.zac4u.mongodb.net/CropAirDB?retryWrites=true&w=majority', {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 });
 
 
@@ -29,12 +29,12 @@ mongoose.connect('mongodb://localhost:27017/CropAirDB' , {
 app.use(express.static(__dirname + '/public'))
 
 
-app.post('/api/register' , async (req, res) => {
-    
-    const { username, pwd} = await req.body
+app.post('/api/register', async (req, res) => {
+
+	const { username, pwd } = await req.body
 
 
-    if (!username || typeof username !== 'string') {
+	if (!username || typeof username !== 'string') {
 		return res.json({ status: 'error', error: 'Invalid username' })
 	}
 
@@ -52,7 +52,7 @@ app.post('/api/register' , async (req, res) => {
 	const password = await bcrypt.hash(pwd, 10)
 
 
-    try {
+	try {
 		const response = await User.create({
 			username,
 			password
@@ -70,7 +70,7 @@ app.post('/api/register' , async (req, res) => {
 		throw error
 	}
 
-    
+
 
 	res.json({ status: 'ok' })
 
@@ -84,55 +84,60 @@ app.post('/api/login', async (req, res) => {
 		return res.json({ status: 'error', error: 'Invalid username/password' })
 	}
 
-    console.log("before if");
+	console.log("before if");
 
-    if (    bcrypt.compare(password, user.password)) {
-        	// the username, password combination is successful
+	if (bcrypt.compare(password, user.password)) {
+		// the username, password combination is successful
 
-        	const token = jwt.sign(
-        		{
-        			id: user._id,
-        			username: user.username
-        		},
-        		JWT_SECRET
-        	)
+		const token = jwt.sign(
+			{
+				id: user._id,
+				username: user.username
+			},
+			JWT_SECRET
+		)
 
-        	return res.json({ status: 'ok', data: token })
-        }
+		return res.json({ status: 'ok', data: token })
+	}
 
 
-    console.log('after if');
+	console.log('after if');
 	res.json({ status: 'error', error: 'Invalid username/password' })
 })
 
 
-app.get("/" , function(req, res) {
-    res.sendFile(__dirname + "/loginPage.html")
+app.get("/", function (req, res) {
+	res.sendFile(__dirname + "/loginPage.html")
 });
 
 
-app.get("/homePage" , function(req, res) {
-        res.sendFile(__dirname + "/homePage.html")
-    });
-    
-    
-    
-app.get("/profilePage" , function(req, res) {
-        res.sendFile(__dirname + "/profilePage.html")
-    });
+app.get("/homePage", function (req, res) {
+	res.sendFile(__dirname + "/homePage.html")
+});
 
-app.get("/newUserPage" , function(req, res) {
-        res.sendFile(__dirname + "/signupPage.html")
-    });
-    
-app.get("/upcomingTrips" , function(req, res) {
-        res.sendFile(__dirname + "/allUpcomingTripsPage.html")
-    });
-    
-app.get("/seatBooking" , function(req, res) {
-        res.sendFile(__dirname + "/seatBookingPage.html")
-    });
-    
+
+
+app.get("/profilePage", function (req, res) {
+	res.sendFile(__dirname + "/profilePage.html")
+});
+
+app.get("/newUserPage", function (req, res) {
+	res.sendFile(__dirname + "/signupPage.html")
+});
+
+app.get("/upcomingTrips", function (req, res) {
+	res.sendFile(__dirname + "/allUpcomingTripsPage.html")
+});
+
+app.get("/seatBooking", function (req, res) {
+	res.sendFile(__dirname + "/seatBookingPage.html")
+});
+
+
+
+app.get("/generatedTicket", function (req, res) {
+	res.sendFile(__dirname + "/generatedTicketPage.html")
+});
 
 
 // Routes
@@ -144,28 +149,28 @@ app.get("/seatBooking" , function(req, res) {
 
 
 const endUserSchema = new mongoose.Schema({
-    bio : {
-        first_name : String,
-        last_name : String , 
-        email_id : String,
-        pwd : String
-    },
-    
-    upcomingTrips:[{
-        flightNumber : String,
-        startingPoint : String,
-        destination : String,
-        takeoffTime : String,
-        landingTime : String,
-        seatNumber : String,
-        additionalCharges : String
+	bio: {
+		first_name: String,
+		last_name: String,
+		email_id: String,
+		pwd: String
+	},
 
-    }],
-    
+	upcomingTrips: [{
+		flightNumber: String,
+		startingPoint: String,
+		destination: String,
+		takeoffTime: String,
+		landingTime: String,
+		seatNumber: String,
+		additionalCharges: String
+
+	}],
+
 })
 
 
-const endUser = mongoose.model('endUser' , endUserSchema);
+const endUser = mongoose.model('endUser', endUserSchema);
 
 // const timBob = new endUser({
 //     bio : { first_name : 'Tim', last_name : 'Bob' , email_id : 'timBob@test.com' , pwd : 'dummy'} , 
@@ -180,5 +185,5 @@ const endUser = mongoose.model('endUser' , endUserSchema);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+	console.log(`Server is running on port ${PORT}.`);
 });
