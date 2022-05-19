@@ -22,8 +22,6 @@ mongoose.connect('mongodb+srv://cropairse:cropairse@cluster0.zac4u.mongodb.net/C
 });
 
 
-
-
 // Routes
 
 app.use(express.static(__dirname + '/public'))
@@ -71,37 +69,28 @@ app.post('/api/register', async (req, res) => {
 	}
 
 
-
+	// res.sendFile(__dirname + "/homePage.html")
 	res.json({ status: 'ok' })
 
 });
 
 app.post('/api/login', async (req, res) => {
-	const { username, password } = await req.body
+	const { username, pwd } = await req.body
 	const user = await User.findOne({ username }).lean()
+
+
+	console.log(pwd);
+
 
 	if (!user) {
 		return res.json({ status: 'error', error: 'Invalid username/password' })
 	}
 
-	console.log("before if");
+	if (bcrypt.compare(pwd, user.password)) {
 
-	if (bcrypt.compare(password, user.password)) {
-		// the username, password combination is successful
-
-		const token = jwt.sign(
-			{
-				id: user._id,
-				username: user.username
-			},
-			JWT_SECRET
-		)
-
-		return res.json({ status: 'ok', data: token })
+		return res.json({ status: 'ok' })
 	}
 
-
-	console.log('after if');
 	res.json({ status: 'error', error: 'Invalid username/password' })
 })
 
@@ -140,52 +129,77 @@ app.get("/generatedTicket", function (req, res) {
 });
 
 
-// Routes
+app.post("/queryingForFlightList", async (req, res) => {
 
 
-// Data Base Stuff
+	const customer = await User.find({
+		username: 'pranav'
+	}).lean();
+
+	// console.log(customer);
+
+	if (customer.length > 0) {
+		res.json({ status: 'ok', data: customer });
+
+	}
+	else {
+		res.json({ status: 'error' })
+
+	}
+
+});
+
+app.post("/flightInfoQR", async (req, res) => {
+
+
+	const customer = await User.find({
+		username: 'pranav'
+	}).lean();
+
+	// console.log(customer);
+
+	if (customer.length > 0) {
+		res.json({ status: 'ok', data: customer });
+
+	}
+	else {
+		res.json({ status: 'error' })
+
+	}
+
+});
+
+// app.post("/bookingSeat", async (req, res) => {
+// 	var data = req.body.seatNumber
+
+// 	const customer = await User.find({
+// 		username: 'pranav'
+// 	}).lean();
+
+// 	console.log(customer);
+
+// 	if (customer.length > 0) {
+// 		User.updateOne({ customerName: 'pranav' }, { "upcomingFlights[0].$.seatNumber ": data }, (err) => {
+// 			if (err) {
+// 				console.log(err);
+// 						}
+// 			else {
+// 				console.log('Success');
+// 				res.json({ status: 'ok', data: customer })
+// 			}
 
 
 
 
-const endUserSchema = new mongoose.Schema({
-	bio: {
-		first_name: String,
-		last_name: String,
-		email_id: String,
-		pwd: String
-	},
+// 		})
 
-	upcomingTrips: [{
-		flightNumber: String,
-		startingPoint: String,
-		destination: String,
-		takeoffTime: String,
-		landingTime: String,
-		seatNumber: String,
-		additionalCharges: String
-
-	}],
-
-})
-
-
-const endUser = mongoose.model('endUser', endUserSchema);
-
-// const timBob = new endUser({
-//     bio : { first_name : 'Tim', last_name : 'Bob' , email_id : 'timBob@test.com' , pwd : 'dummy'} , 
-//     upcomingTrips : [{flightNumber : '6E 489' , startingPoint : 'SAN' , endingPoint : 'JFK' , takeofftime : '10:00 AM' , landingTime : '5:00 PM' , seatNumber : '5A' , additionalCharges : 'False'} ],
-// })
-
-// timBob.save();
-
-// Data Base Stuff
-
+// 	}
+// });
 
 let port = process.env.PORT;
 
 if (port == null || port == "") {
-  port = 3000;
+	port = 4000;
 }
 
 app.listen(port, () => {
